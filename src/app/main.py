@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_project_id
 from app.route import test_route
+from app.route import transcription_route
 from google.cloud import aiplatform
 
 from app.core.logging import setup_logging
@@ -33,3 +34,4 @@ app.add_middleware(
 )
 
 app.include_router(test_route.router, tags=["test"])
+app.include_router(transcription_route.router, tags=["transcript"])
