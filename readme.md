@@ -15,8 +15,8 @@ pip freeze > requirements.txt
 
 ## start development server
 ```bash
-uvicorn app.main:app --reload
-fastapi dev main.py --reload
+cd src
+uvicorn app.main:app --workers 4
 ```
 
 # NOTES
