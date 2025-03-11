@@ -48,10 +48,10 @@ def transfer_money(transfer_request: TransferRequest, db: Session = Depends(get_
             raise HTTPException(status_code=400, detail="Insufficient balance")
 
         # Check if account is active
-        if sender_account.status != "active":
+        if sender_account.status != "ACTIVE":
             raise HTTPException(status_code=400, detail="Sender account is not active")
 
-        if receiver_account.status != "active":
+        if receiver_account.status != "ACTIVE":
             raise HTTPException(status_code=400, detail="Receiver account is not active")
 
         # Create a reference number
