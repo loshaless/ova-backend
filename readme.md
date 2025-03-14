@@ -16,7 +16,7 @@ pip freeze > requirements.txt
 ## start development server
 ```bash
 cd src
-uvicorn app.main:app --workers 4
+uvicorn app.main:app --host 0.0.0.0 --workers 4
 ```
 
 # NOTES
