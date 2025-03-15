@@ -16,3 +16,6 @@ class Transaction(Base):
     is_scheduled = Column(Boolean, nullable=False, default=False)
     admin_fee = Column(Numeric(19, 2), nullable=False, default=0.00)
     transaction_type = Column(String(50), nullable=False)
+    sender_name = Column(String(255), nullable=False)
+    receiver_name = Column(String(255), nullable=False)
+    receiver_location = Column(String(255), nullable=True)

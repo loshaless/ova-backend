@@ -57,6 +57,10 @@ def transfer_money(transfer_request: TransferRequest, db: Session = Depends(get_
         # Create a reference number
         reference_number = TransactionCreate.generate_reference_number()
 
+        # Find sender name and receiver name
+        sender_name = sender_user.full_name
+        receiver_name = db.query(User).get(receiver_account.user_id).full_name
+
         # Create transaction record
         transaction = Transaction(
             reference_number=reference_number,
@@ -64,7 +68,9 @@ def transfer_money(transfer_request: TransferRequest, db: Session = Depends(get_
             receiver_account_id=receiver_account.account_id,
             amount=transfer_request.amount,
             message=transfer_request.message,
-            transaction_type="transfer via Octo Pay"
+            transaction_type="transfer via Octo Pay",
+            sender_name=sender_name,
+            receiver_name=receiver_name,
         )
 
         # Update account balances

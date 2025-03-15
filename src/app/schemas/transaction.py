@@ -48,6 +48,9 @@ class TransactionResponse(BaseModel):
     admin_fee: Decimal
     transaction_type: str
     is_scheduled: bool
+    sender_name: str
+    receiver_name: str
+    receiver_location: Optional[str]
 
     class Config:
         from_attributes = True
