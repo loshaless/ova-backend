@@ -51,6 +51,12 @@ class TransactionResponse(BaseModel):
     sender_name: str
     receiver_name: str
     receiver_location: Optional[str]
+    category_main: Optional[str]
+    category_sub: Optional[str]
 
     class Config:
         from_attributes = True
+
+class CategoryUpdate(BaseModel):
+    category_main: str
+    category_sub: str
