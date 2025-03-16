@@ -26,17 +26,18 @@ def get_user_by_phone(phone_number: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.get("/by-name/{name}", response_model=UserBase)
-def get_user_by_name(name: str, db: Session = Depends(get_db)):
+@router.get("/by-name/{name}/{similarity_score}", response_model=UserBase)
+def get_user_by_name(name: str, similarity_score: float, db: Session = Depends(get_db)):
     sql = text("""
                 SELECT
                     u.full_name,
-                    u.phone_number,
+                    a.account_number,
                     similarity(LOWER(u.full_name), LOWER(:search_name)) AS full_text_similarity_score,
                     word_similarities_array,
                     max_word_similarity_score
                 FROM
-                    "USER" u,
+                    "USER" u
+                JOIN account a on u.user_id = a.user_id,
                     LATERAL (
                         SELECT
                             array_agg(similarity_score) AS word_similarities_array,
@@ -51,10 +52,10 @@ def get_user_by_name(name: str, db: Session = Depends(get_db)):
     result = db.execute(sql, {"search_name": name})
     results = result.fetchall()
 
-    if not results or (results[0][2] < 0.2 and results[0][4] < 0.2):
+    if not results or (float(results[0][2]) < similarity_score and float(results[0][4]) < similarity_score):
         raise HTTPException(status_code=404, detail="User not found")
 
     return UserBase(
         full_name=results[0][0],
-        phone_number=results[0][1],
+        account_number=results[0][1]
     )

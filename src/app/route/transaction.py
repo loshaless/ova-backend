@@ -91,20 +91,6 @@ def transfer_money(transfer_request: TransferRequest, db: Session = Depends(get_
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Transaction failed: {str(e)}")
 
-@router.get("/{transaction_id}", response_model=TransactionResponse)
-def get_transaction(transaction_id: int, db: Session = Depends(get_db)):
-    transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id).first()
-    if not transaction:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-    return transaction
-
-@router.get("/reference/{reference_number}", response_model=TransactionResponse)
-def get_transaction_by_reference(reference_number: str, db: Session = Depends(get_db)):
-    transaction = db.query(Transaction).filter(Transaction.reference_number == reference_number).first()
-    if not transaction:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-    return transaction
-
 @router.get("/account/{account_id}", response_model=List[TransactionResponse])
 def get_account_transactions(account_id: int, db: Session = Depends(get_db)):
     transactions = db.query(Transaction).filter(

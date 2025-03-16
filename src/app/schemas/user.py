@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class UserBase(BaseModel):
     full_name: str
-    phone_number: str
+    account_number: str
 
 class UserBaseWithPin(UserBase):
     pin: str
