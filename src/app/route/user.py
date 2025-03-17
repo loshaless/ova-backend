@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 from app.models.user import User
-from app.schemas.user import UserResponseNoPin, UserBase
+from app.schemas.user import UserResponseNoPin, UserBase, UserWithAccount
 from sqlalchemy.sql import func, text
 router = APIRouter(
     prefix="/users",
@@ -26,11 +26,12 @@ def get_user_by_phone(phone_number: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.get("/by-name/{name}/{similarity_score}", response_model=UserBase)
+@router.get("/by-name/{name}/{similarity_score}", response_model=UserWithAccount)
 def get_user_by_name(name: str, similarity_score: float, db: Session = Depends(get_db)):
     sql = text("""
                 SELECT
                     u.full_name,
+                    u.phone_number,
                     a.account_number,
                     similarity(LOWER(u.full_name), LOWER(:search_name)) AS full_text_similarity_score,
                     word_similarities_array,
@@ -55,7 +56,8 @@ def get_user_by_name(name: str, similarity_score: float, db: Session = Depends(g
     if not results or (float(results[0][2]) < similarity_score and float(results[0][4]) < similarity_score):
         raise HTTPException(status_code=404, detail="User not found")
 
-    return UserBase(
+    return UserWithAccount(
         full_name=results[0][0],
-        account_number=results[0][1]
+        phone_number=results[0][1],
+        account_number=results[0][2]
     )
