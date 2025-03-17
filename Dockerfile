@@ -13,4 +13,4 @@ COPY ./src /app/src
 COPY ./src/app /code/app
 
 # Command to run the FastAPI application using Uvicorn
-CMD ["uvicorn", "app.main:app","--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app","--host", "0.0.0.0", "--port", "8000", "--workers", "5"]
