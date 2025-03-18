@@ -53,7 +53,10 @@ def get_user_by_name(name: str, similarity_score: float, db: Session = Depends(g
     result = db.execute(sql, {"search_name": name})
     results = result.fetchall()
 
-    if not results or (float(results[0][2]) < similarity_score and float(results[0][4]) < similarity_score):
+    full_name_similarity_score = float(results[0][3])
+    max_similarity_each_word = float(results[0][5])
+
+    if not results or (full_name_similarity_score< similarity_score and max_similarity_each_word < similarity_score):
         raise HTTPException(status_code=404, detail="User not found")
 
     return UserWithAccount(
