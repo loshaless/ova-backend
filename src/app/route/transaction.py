@@ -8,7 +8,7 @@ from app.database.connection import get_db
 from app.models.account import Account
 from app.models.transaction import Transaction
 from app.models.user import User
-from app.schemas.transaction import TransactionCreate, TransactionResponse, TransferRequest, CategoryUpdate
+from app.schemas.transaction import TransactionCreate, TransactionResponse, TransferRequest, CategoryUpdateRequest
 
 router = APIRouter(
     prefix="/transactions",
@@ -104,14 +104,14 @@ def get_account_transactions(account_id: int, db: Session = Depends(get_db)):
 @router.put("/category/{transaction_id}", response_model=TransactionResponse)
 def update_transaction_category(
     transaction_id: int,
-    category_update: CategoryUpdate,
+    category_update: CategoryUpdateRequest,
     db: Session = Depends(get_db)
 ):
     transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id).first()
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
-    transaction.category_main = category_update.category_main
-    transaction.category_sub = category_update.category_sub
+    transaction.category_main_id = category_update.category_main_id
+    transaction.category_sub_id = category_update.category_sub_id
     db.commit()
     db.refresh(transaction)
     return transaction

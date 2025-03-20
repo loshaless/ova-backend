@@ -19,5 +19,5 @@ class Transaction(Base):
     sender_name = Column(String(255), nullable=False)
     receiver_name = Column(String(255), nullable=False)
     receiver_location = Column(String(255), nullable=True)
-    category_main = Column(String(50), nullable=True)
-    category_sub = Column(String(50), nullable=True)
+    category_main_id = Column(Integer, nullable=True)
+    category_sub_id = Column(Integer, nullable=True)

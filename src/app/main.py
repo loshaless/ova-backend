@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_project_id
-from app.route import user, account, transcription_route, test_route, transaction
+from app.route import user, account, transcription_route, test_route, transaction, category
 from google.cloud import aiplatform
 
 from app.core.logging import setup_logging
@@ -41,4 +41,5 @@ app.include_router(transcription_route.router, tags=["transcript"])
 app.include_router(user.router, tags=["user"])
 app.include_router(account.router, tags=["account"])
 app.include_router(transaction.router, tags=["transaction"])
+app.include_router(category.router, tags=["category"])
 
