@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from app.database.connection import Base
 from enum import Enum
+from sqlalchemy.orm import relationship
 
 class AccountType(str, Enum):
     OCTO_PAY = "Octo Pay"
@@ -18,3 +19,5 @@ class Account(Base):
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     account_type = Column(String(50), nullable=False)
     account_number = Column(String(100), nullable=False, unique=True)
+
+    user = relationship("User", back_populates="accounts")
