@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 from app.models.user import User
-from app.schemas.user import UserResponseNoPin, UserBase, UserWithAccount
+from app.schemas.user import UserResponseNoPin, UserBase, UserWithAccount, UserResponseJoinAccount
 from sqlalchemy.sql import func, text
 router = APIRouter(
     prefix="/users",
@@ -19,9 +19,17 @@ def get_users(
     users = db.query(User).offset(skip).limit(limit).all()
     return users
 
-@router.get("/by-phone/{phone_number}", response_model=UserResponseNoPin)
-def get_user_by_phone(phone_number: str, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.phone_number == phone_number).first()
+@router.get("/{user_id}", response_model=UserResponseJoinAccount)
+def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
+    sql = text("""
+        select u.user_id, u.full_name, a.account_id, a.account_number, a.balance, a.status, a.account_type
+        from "USER" u
+        join account a on a.user_id = u.user_id
+        where a.user_id = :user_id;
+    """)
+    result = db.execute(sql, {"user_id": user_id})
+    user = result.fetchone()
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

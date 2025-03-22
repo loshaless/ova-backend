@@ -18,3 +18,12 @@ class UserResponseNoPin(UserBase):
 
 class UserWithAccount(UserBase):
     account_number: str
+
+class UserResponseJoinAccount(BaseModel):
+    user_id: int
+    full_name: str
+    account_id: int
+    account_number: str
+    balance: float
+    status: str
+    account_type: str
