@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -19,11 +21,13 @@ class UserResponseNoPin(UserBase):
 class UserWithAccount(UserBase):
     account_number: str
 
-class UserResponseJoinAccount(BaseModel):
-    user_id: int
-    full_name: str
-    account_id: int
+class AccountJoinuser(BaseModel):
     account_number: str
     balance: float
     status: str
     account_type: str
+
+class UserResponseJoinAccount(BaseModel):
+    user_id: int
+    full_name: str
+    accounts: List[AccountJoinuser]

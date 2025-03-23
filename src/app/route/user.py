@@ -1,12 +1,13 @@
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 from app.models.user import User
 from app.models.user_preference import UserPreference
-from app.schemas.user import UserResponseNoPin, UserBase, UserWithAccount, UserResponseJoinAccount
+from app.schemas.user import UserWithAccount, UserResponseJoinAccount
 from sqlalchemy.sql import func, text
+from sqlalchemy.orm import joinedload
 
 from app.schemas.user_preference import UserPreferenceResponse, UserPreferenceUpdate
 
@@ -14,18 +15,18 @@ router = APIRouter(
     prefix="/users",
 )
 
-@router.get("/", response_model=List[UserResponseNoPin])
+@router.get("/", response_model=List[UserResponseJoinAccount])
 def get_users(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
-    users = db.query(User).offset(skip).limit(limit).all()
+    users = db.query(User).options(joinedload(User.accounts)).offset(skip).limit(limit).all()
     return users
 
 @router.get("/{user_id}", response_model=UserResponseJoinAccount)
 def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.user_id == user_id).first()
+    user = db.query(User).options(joinedload(User.accounts)).filter(User.user_id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
