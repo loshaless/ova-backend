@@ -22,6 +22,7 @@ class UserWithAccount(UserBase):
     account_number: str
 
 class AccountJoinuser(BaseModel):
+    account_id: int
     account_number: str
     balance: float
     status: str
