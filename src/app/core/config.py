@@ -10,3 +10,6 @@ DB_NAME = os.getenv("DB_NAME", "hansel_test")
 
 def get_project_id() -> str:
     return os.getenv("PROJECT_ID", "hackfest-vertex-ai")
+
+def get_creds() -> str:
+    return os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "app/secrets/service-account.json")
