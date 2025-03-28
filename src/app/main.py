@@ -1,13 +1,10 @@
-import os
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./app/secrets/service-account.json"
-
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_project_id
-from app.route import user, account, transcription_route, test_route, transaction, category, grounding
+from app.api.routes import transcription_route, transaction, merchant
+from app.api.routes import user, account, test_route, category, grounding
 from google.cloud import aiplatform
 
 from app.core.logging import setup_logging
@@ -43,4 +40,4 @@ app.include_router(account.router, tags=["account"])
 app.include_router(transaction.router, tags=["transaction"])
 app.include_router(category.router, tags=["category"])
 app.include_router(grounding.router, tags=["grounding"])
-
+app.include_router(merchant.router, tags=["merchant"])
