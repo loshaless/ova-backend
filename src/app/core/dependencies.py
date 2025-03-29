@@ -2,7 +2,7 @@
 from typing import Type
 
 from app.core.config import PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS
-from app.services.external.google_grounding import VertexAIService
+from app.services.external.vertex_ai_service import VertexAIService
 from app.services.external.google_maps_service import GoogleMapsService
 from app.services.external.google_tts import TTSService
 

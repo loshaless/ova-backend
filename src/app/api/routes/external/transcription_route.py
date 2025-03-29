@@ -1,7 +1,5 @@
 import logging
 from fastapi import APIRouter, Depends
-from starlette.responses import JSONResponse
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 from app.core.dependencies import get_tts_service
 from app.schemas.external.transcript_schema import TTSRequest
