@@ -1,10 +1,9 @@
 import base64
 import logging
 from google.cloud import texttospeech
-from app.core.config import get_settings
+from app.core.config import TTS_PITCH, TTS_SPEAKING_RATE, TTS_GENDER, TTS_LANGUAGE_CODE
 
 logger = logging.getLogger(__name__)
-settings = get_settings()
 client = texttospeech.TextToSpeechClient()
 
 
@@ -18,14 +17,14 @@ class TTSService:
 
     audio_config = texttospeech.AudioConfig(
         audio_encoding=texttospeech.AudioEncoding.OGG_OPUS,
-        speaking_rate=settings.TTS_SPEAKING_RATE,
-        pitch=settings.TTS_PITCH,
+        speaking_rate=float(TTS_SPEAKING_RATE),
+        pitch=float(TTS_PITCH),
     )
 
     voice = texttospeech.VoiceSelectionParams(
-        language_code=settings.TTS_LANGUAGE_CODE,
+        language_code=TTS_LANGUAGE_CODE,
         ssml_gender=gender_map.get(
-            settings.TTS_GENDER,
+            TTS_GENDER,
             texttospeech.SsmlVoiceGender.FEMALE
         ),
     )

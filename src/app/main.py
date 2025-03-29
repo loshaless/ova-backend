@@ -7,15 +7,13 @@ from app.api.routes import user_route, account_route, test_route, category_route
 from app.api.routes.external import grounding_route, transcription_route
 from google.cloud import aiplatform
 
-from app.core.config import get_settings
+from app.core.config import PROJECT_ID
 from app.core.logging import setup_logging
-
-settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
-    project_id: str = settings.PROJECT_ID
+    project_id: str = PROJECT_ID
     aiplatform.init(project=project_id, location="us-central1")
     yield
     print("Shutting down fast api application...")

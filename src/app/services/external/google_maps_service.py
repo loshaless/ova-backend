@@ -2,10 +2,8 @@
 import requests
 from typing import List
 
-from app.core.config import get_settings
+from app.core.config import GOOGLE_MAP_API_KEY
 from app.schemas.external.google_map_schema import GoogleMapResponse
-
-settings = get_settings()
 
 class GoogleMapsService:
     BASE_URLS = {
@@ -26,7 +24,7 @@ class GoogleMapsService:
         """
         params = {
             "query": query,
-            "key": settings.GOOGLE_MAP_API_KEY
+            "key": GOOGLE_MAP_API_KEY
         }
 
         response = requests.get(cls.BASE_URLS['text_search'], params=params)

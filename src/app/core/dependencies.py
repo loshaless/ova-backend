@@ -1,12 +1,10 @@
 # app/core/dependencies.py
 from typing import Type
 
-from app.core.config import get_settings
+from app.core.config import PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS
 from app.services.external.google_grounding import VertexAIService
 from app.services.external.google_maps_service import GoogleMapsService
 from app.services.external.google_tts import TTSService
-
-settings = get_settings()
 
 def get_google_maps_service() -> Type[GoogleMapsService]:
     """
@@ -22,8 +20,8 @@ def get_vertex_ai_service() -> VertexAIService:
         VertexAIService: Configured Vertex AI service
     """
     return VertexAIService(
-        project_id=settings.PROJECT_ID,
-        credentials_path=settings.GOOGLE_APPLICATION_CREDENTIALS
+        project_id=PROJECT_ID,
+        credentials_path=GOOGLE_APPLICATION_CREDENTIALS
     )
 
 def get_tts_service() -> Type[TTSService]:

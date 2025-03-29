@@ -7,9 +7,8 @@ from starlette.responses import JSONResponse
 from time import sleep
 from vertexai.generative_models import GenerativeModel, GenerationConfig, Part
 
-from app.core.config import get_settings
+from app.core.config import PROJECT_ID
 
-settings = get_settings()
 _LOGGER = logging.getLogger(__name__)
 router = APIRouter(prefix="/test")
 
@@ -25,8 +24,8 @@ def go_to_sleep():
 
 @router.get("/env")
 def protected_route():
-    _LOGGER.info(f"Project ID: {settings.PROJECT_ID}")
-    return {"project_id": settings.PROJECT_ID}
+    _LOGGER.info(f"Project ID: {PROJECT_ID}")
+    return {"project_id": PROJECT_ID}
 
 @router.get("/transcribe-mp3-example")
 def vertex_ai():
