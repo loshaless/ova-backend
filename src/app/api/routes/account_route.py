@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.database.connection import get_db
 from app.models.account_model import AccountModel, AccountType
 from app.database.repositories.account_repository import AccountRepository
-from app.schemas.account import AccountResponse
+from app.schemas.account_schema import AccountResponse
 from app.services.account_service import AccountService
 
 router = APIRouter(

@@ -3,7 +3,7 @@ import requests
 from typing import List
 
 from app.core.config import get_settings
-from app.schemas.external.google_map import GoogleMapResponse
+from app.schemas.external.google_map_schema import GoogleMapResponse
 
 settings = get_settings()
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.core.dependencies import get_vertex_ai_service
 from app.services.external.google_grounding import VertexAIService
-from app.schemas.external.grounding import GroundingRequest, GroundingResponse
+from app.schemas.external.grounding_schema import GroundingRequest, GroundingResponse
 
 router = APIRouter(prefix="/google/grounding")
 

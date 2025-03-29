@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.database.repositories.user_preference_repository import UserPreferenceRepository
 from app.database.repositories.user_repository import UserRepository
-from app.schemas.user import UserWithAccount, UserResponseJoinAccount
+from app.schemas.user_schema import UserWithAccount, UserResponseJoinAccount
 
-from app.schemas.user_preference import UserPreferenceResponse, UserPreferenceUpdate
+from app.schemas.user_preference_schema import UserPreferenceResponse, UserPreferenceUpdate
 from app.services.user_preference_service import UserPreferenceService
 from app.services.user_service import UserService
 

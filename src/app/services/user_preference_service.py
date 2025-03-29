@@ -1,6 +1,6 @@
 from app.database.repositories.user_preference_repository import UserPreferenceRepository
 from app.database.repositories.user_repository import UserRepository
-from app.schemas.user_preference import UserPreferenceUpdate
+from app.schemas.user_preference_schema import UserPreferenceUpdate
 from fastapi import HTTPException
 
 class UserPreferenceService:

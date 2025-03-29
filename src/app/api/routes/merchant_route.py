@@ -5,8 +5,8 @@ from app.core.dependencies import get_google_maps_service
 from app.database.connection import get_db
 from app.services.external.google_maps_service import GoogleMapsService
 from app.models.merchant_model import MerchantBrandModel, MerchantLocationModel
-from app.schemas.external.google_map import GoogleMapResponse
-from app.schemas.merchant import MerchantBrandCreate, RestaurantLocationCreate, BulkCreateRestaurantLocation
+from app.schemas.external.google_map_schema import GoogleMapResponse
+from app.schemas.merchant_schema import MerchantBrandCreate, RestaurantLocationCreate, BulkCreateRestaurantLocation
 from sqlalchemy.orm import Session
 
 router = APIRouter(

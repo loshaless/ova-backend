@@ -1,7 +1,7 @@
 from app.database.repositories.user_repository import UserRepository
 from fastapi import HTTPException
 
-from app.schemas.user import UserWithAccount
+from app.schemas.user_schema import UserWithAccount
 
 
 class UserService:

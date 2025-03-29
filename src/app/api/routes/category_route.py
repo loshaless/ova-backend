@@ -4,7 +4,7 @@ from typing import List
 
 from app.database.connection import get_db
 from app.database.repositories.category_repository import CategoryRepository
-from app.schemas.category import CategoryResponse
+from app.schemas.category_schema import CategoryResponse
 from app.services.category_service import CategoryService
 
 router = APIRouter(

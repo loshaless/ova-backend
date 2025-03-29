@@ -1,5 +1,5 @@
 from app.database.repositories.category_repository import CategoryRepository
-from app.schemas.category import CategoryResponse, SubCategoryResponse
+from app.schemas.category_schema import CategoryResponse, SubCategoryResponse
 
 class CategoryService:
     def __init__(self, category_repository: CategoryRepository):

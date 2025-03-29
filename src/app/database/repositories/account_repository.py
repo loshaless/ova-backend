@@ -12,7 +12,14 @@ class AccountRepository:
         return self.session.query(AccountModel).filter(AccountModel.account_id == account_id).first()
 
     def get_account_by_account_number(self, account_number: str) -> Optional[AccountModel]:
-        return self.session.query(AccountModel).filter(AccountModel.account_number == account_number).first()
+        return self.session.query(AccountModel).filter(
+            AccountModel.account_number == account_number
+        ).first()
+
+    def get_account_by_number_with_for_update(self, account_number: str) -> Type[AccountModel] | None:
+        return self.session.query(AccountModel).filter(
+            AccountModel.account_number == account_number
+        ).with_for_update().first()
 
     def get_account_by_user_id_and_account_type(self, user_id: int, account_type: str) -> Optional[AccountModel]:
         return (self.session

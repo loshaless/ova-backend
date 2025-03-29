@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 from app.core.dependencies import get_tts_service
-from app.schemas.external.transcript import TTSResponse, TTSRequest
+from app.schemas.external.transcript_schema import TTSResponse, TTSRequest
 from app.services.external.google_tts import TTSService
 
 _LOGGER = logging.getLogger(__name__)

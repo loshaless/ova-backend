@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.models.user_preference_model import UserPreferenceModel
-from app.schemas.user_preference import UserPreferenceUpdate
+from app.schemas.user_preference_schema import UserPreferenceUpdate
 
 
 class UserPreferenceRepository:
