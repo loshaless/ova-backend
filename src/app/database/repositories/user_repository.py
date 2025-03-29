@@ -12,7 +12,10 @@ class UserRepository:
         return self.session.query(UserModel).filter(UserModel.user_id == user_id).first()
 
     def get_all_users_join_accounts(self, skip: int = 0, limit: int = 100):
-        return self.session.query(UserModel).options(joinedload(UserModel.accounts)).offset(skip).limit(limit).all()
+        return (self.session.query(UserModel)
+                .options(joinedload(UserModel.accounts))
+                .where(UserModel.user_type != "merchant")
+                .offset(skip).limit(limit).all())
 
     def get_user_by_id_join_accounts(self, user_id: int):
         return self.session.query(UserModel).options(joinedload(UserModel.accounts)).filter(UserModel.user_id == user_id).first()
