@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_project_id
 from app.api.routes import transcription_route, transaction, merchant
-from app.api.routes import user, account, test_route, category, grounding
+from app.api.routes import user, account_route, test_route, category_route, grounding
 from google.cloud import aiplatform
 
 from app.core.logging import setup_logging
@@ -36,8 +36,8 @@ app.add_middleware(
 app.include_router(test_route.router, tags=["test"])
 app.include_router(transcription_route.router, tags=["transcript"])
 app.include_router(user.router, tags=["user"])
-app.include_router(account.router, tags=["account"])
+app.include_router(account_route.router, tags=["account"])
 app.include_router(transaction.router, tags=["transaction"])
-app.include_router(category.router, tags=["category"])
+app.include_router(category_route.router, tags=["category"])
 app.include_router(grounding.router, tags=["grounding"])
 app.include_router(merchant.router, tags=["merchant"])

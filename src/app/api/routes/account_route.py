@@ -2,7 +2,7 @@ from typing import List, Optional, Type
 from fastapi import APIRouter, Depends
 from app.database.connection import get_db
 from app.models.account_model import AccountModel, AccountType
-from app.repositories.account_repository import AccountRepository
+from app.database.repositories.account_repository import AccountRepository
 from app.schemas.account import AccountResponse
 from app.services.account_service import AccountService
 
@@ -10,7 +10,7 @@ router = APIRouter(
     prefix="/accounts",
 )
 
-def get_account_service(db=Depends(get_db)):
+def get_account_service(db=Depends(get_db)) -> AccountService:
     return AccountService(AccountRepository(db))
 
 @router.get("/{account_id}", response_model=AccountResponse)

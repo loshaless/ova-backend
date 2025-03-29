@@ -1,7 +1,7 @@
 from typing import Optional, Type
 
 from app.models.account_model import AccountModel
-from app.repositories.account_repository import AccountRepository
+from app.database.repositories.account_repository import AccountRepository
 from fastapi import HTTPException
 
 class AccountService:
