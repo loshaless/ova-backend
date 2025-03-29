@@ -10,4 +10,4 @@ class UserPreferenceModel(Base):
     preferences = Column(JSON, nullable=False)
     last_updated = Column(DateTime(timezone=True), server_default=func.timezone('Asia/Jakarta', func.now()),
                           nullable=False)
-    persona = Column(Text)
+    persona = Column(JSON)
