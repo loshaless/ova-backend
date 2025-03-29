@@ -1,9 +1,11 @@
 # app/external_services/google_maps_service.py
 import requests
 from typing import List
-from app.core.config import GOOGLE_MAP_API_KEY
-from app.schemas.google_map import GoogleMapResponse
 
+from app.core.config import get_settings
+from app.schemas.external.google_map import GoogleMapResponse
+
+settings = get_settings()
 
 class GoogleMapsService:
     BASE_URLS = {
@@ -24,7 +26,7 @@ class GoogleMapsService:
         """
         params = {
             "query": query,
-            "key": GOOGLE_MAP_API_KEY
+            "key": settings.GOOGLE_MAP_API_KEY
         }
 
         response = requests.get(cls.BASE_URLS['text_search'], params=params)
@@ -64,7 +66,7 @@ class GoogleMapsService:
         params = {
             "location": f"{latitude},{longitude}",
             "radius": radius,
-            "key": GOOGLE_MAP_API_KEY,
+            "key": settings.GOOGLE_MAP_API_KEY,
             "keyword": keyword,
             "type": type_name
         }

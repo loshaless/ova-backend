@@ -3,13 +3,13 @@ import os
 import threading
 
 from fastapi import APIRouter
-from fastapi.params import Depends
 from starlette.responses import JSONResponse
 from time import sleep
 from vertexai.generative_models import GenerativeModel, GenerationConfig, Part
 
-from app.core.config import get_project_id
+from app.core.config import get_settings
 
+settings = get_settings()
 _LOGGER = logging.getLogger(__name__)
 router = APIRouter(prefix="/test")
 
@@ -24,9 +24,9 @@ def go_to_sleep():
     return JSONResponse(status_code=200, content=result)
 
 @router.get("/env")
-def protected_route(project_id: str = Depends(get_project_id)):
-    _LOGGER.info(f"Project ID: {project_id}")
-    return {"project_id": project_id}
+def protected_route():
+    _LOGGER.info(f"Project ID: {settings.PROJECT_ID}")
+    return {"project_id": settings.PROJECT_ID}
 
 @router.get("/transcribe-mp3-example")
 def vertex_ai():
