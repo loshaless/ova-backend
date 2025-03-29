@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
-from app.models.category import CategoryMain, CategorySub
+from app.models.category_model import CategoryMainModel, CategorySubModel
 from app.schemas.category import CategoryResponse, SubCategoryResponse
 
 router = APIRouter(
@@ -13,7 +13,7 @@ router = APIRouter(
 
 @router.get("/")
 def get_all_categories_with_subcategories(db: Session = Depends(get_db)):
-    categories = db.query(CategoryMain).all()
+    categories = db.query(CategoryMainModel).all()
 
     # Using Pydantic's built-in ORM mode conversion
     return [

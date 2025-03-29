@@ -8,7 +8,7 @@ class AccountType(str, Enum):
     OCTO_PAY = "Octo Pay"
     CREDIT_CARD = "Credit Card"
 
-class Account(Base):
+class AccountModel(Base):
     __tablename__ = "account"
 
     account_id = Column(Integer, primary_key=True, index=True)
@@ -20,4 +20,4 @@ class Account(Base):
     account_type = Column(String(50), nullable=False)
     account_number = Column(String(100), nullable=False, unique=True)
 
-    user = relationship("User", back_populates="accounts")
+    user = relationship("UserModel", back_populates="accounts")

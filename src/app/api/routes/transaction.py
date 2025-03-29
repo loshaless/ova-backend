@@ -5,9 +5,9 @@ from sqlalchemy import and_, or_
 from decimal import Decimal
 
 from app.database.connection import get_db
-from app.models.account import Account
-from app.models.transaction import Transaction
-from app.models.user import User
+from app.models.account_model import AccountModel
+from app.models.transaction_model import TransactionModel
+from app.models.user_model import UserModel
 from app.schemas.transaction import TransactionCreate, TransactionResponse, TransferRequest, CategoryUpdateRequest
 
 router = APIRouter(
@@ -19,23 +19,23 @@ def transfer_money(transfer_request: TransferRequest, db: Session = Depends(get_
     # Start a transaction (database transaction, not our business transaction)
     try:
         # Get sender account
-        sender_account = db.query(Account).filter(
-            Account.account_number == transfer_request.sender_account_number
+        sender_account = db.query(AccountModel).filter(
+            AccountModel.account_number == transfer_request.sender_account_number
         ).with_for_update().first()  # Lock the row for update
 
         if not sender_account:
             raise HTTPException(status_code=404, detail="Sender account not found")
 
         # Get receiver account
-        receiver_account = db.query(Account).filter(
-            Account.account_number == transfer_request.receiver_account_number
+        receiver_account = db.query(AccountModel).filter(
+            AccountModel.account_number == transfer_request.receiver_account_number
         ).with_for_update().first()  # Lock the row for update
 
         if not receiver_account:
             raise HTTPException(status_code=404, detail="Receiver account not found")
 
         # Get sender's user to verify PIN
-        sender_user = db.query(User).filter(User.user_id == sender_account.user_id).first()
+        sender_user = db.query(UserModel).filter(UserModel.user_id == sender_account.user_id).first()
         if not sender_user:
             raise HTTPException(status_code=404, detail="Sender user not found")
 
@@ -59,10 +59,10 @@ def transfer_money(transfer_request: TransferRequest, db: Session = Depends(get_
 
         # Find sender name and receiver name
         sender_name = sender_user.full_name
-        receiver_name = db.query(User).get(receiver_account.user_id).full_name
+        receiver_name = db.query(UserModel).get(receiver_account.user_id).full_name
 
         # Create transaction record
-        transaction = Transaction(
+        transaction = TransactionModel(
             reference_number=reference_number,
             sender_account_id=sender_account.account_id,
             receiver_account_id=receiver_account.account_id,
@@ -93,12 +93,12 @@ def transfer_money(transfer_request: TransferRequest, db: Session = Depends(get_
 
 @router.get("/account/{account_id}", response_model=List[TransactionResponse])
 def get_account_transactions(account_id: int, db: Session = Depends(get_db)):
-    transactions = db.query(Transaction).filter(
+    transactions = db.query(TransactionModel).filter(
         or_(
-            Transaction.sender_account_id == account_id,
-            Transaction.receiver_account_id == account_id
+            TransactionModel.sender_account_id == account_id,
+            TransactionModel.receiver_account_id == account_id
         )
-    ).order_by(Transaction.transaction_time.desc()).all()
+    ).order_by(TransactionModel.transaction_time.desc()).all()
     return transactions
 
 @router.put("/category/{transaction_id}", response_model=TransactionResponse)
@@ -107,7 +107,7 @@ def update_transaction_category(
     category_update: CategoryUpdateRequest,
     db: Session = Depends(get_db)
 ):
-    transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id).first()
+    transaction = db.query(TransactionModel).filter(TransactionModel.transaction_id == transaction_id).first()
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
     transaction.category_main_id = category_update.category_main_id

@@ -4,7 +4,7 @@ from typing import List
 from app.core.dependencies import get_google_maps_service
 from app.database.connection import get_db
 from app.external_services.google_maps_service import GoogleMapsService
-from app.models.merchant import MerchantBrand, RestaurantLocation
+from app.models.merchant_model import MerchantBrandModel, MerchantLocationModel
 from app.schemas.google_map import GoogleMapResponse
 from app.schemas.merchant import MerchantBrandCreate, RestaurantLocationCreate, BulkCreateRestaurantLocation
 from sqlalchemy.orm import Session
@@ -15,7 +15,7 @@ router = APIRouter(
 
 @router.post("/merchant-brands/")
 def create_merchant_brand(merchant_brand: MerchantBrandCreate, db: Session = Depends(get_db)):
-    db_brand = MerchantBrand(
+    db_brand = MerchantBrandModel(
         name=merchant_brand.name,
         description=merchant_brand.description,
         promo_details=merchant_brand.promo_details
@@ -49,11 +49,11 @@ def create_restaurant_location(
     db: Session
 ):
     # Verify the brand exists
-    brand = db.query(MerchantBrand).filter(MerchantBrand.id == location.brand_id).first()
+    brand = db.query(MerchantBrandModel).filter(MerchantBrandModel.id == location.brand_id).first()
     if not brand:
         raise HTTPException(status_code=404, detail="Merchant brand not found")
 
-    db_location = RestaurantLocation(
+    db_location = MerchantLocationModel(
         name= location.name,
         brand_id=location.brand_id,
         address=location.address,

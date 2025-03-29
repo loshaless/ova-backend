@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Numeric, DateTime, Boolean, Fore
 from sqlalchemy.sql import func
 from app.database.connection import Base
 
-class Transaction(Base):
+class TransactionModel(Base):
     __tablename__ = "transaction"
 
     transaction_id = Column(Integer, primary_key=True, index=True)

@@ -2,7 +2,7 @@ from sqlalchemy.sql import func
 from app.database.connection import Base
 from sqlalchemy import create_engine, Column, Integer, String, JSON, ForeignKey, DateTime, Text
 
-class UserPreference(Base):
+class UserPreferenceModel(Base):
     __tablename__ = "user_preference"
 
     user_preference_id = Column(Integer, primary_key=True, index=True)

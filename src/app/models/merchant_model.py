@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from app.database.connection import Base
 
-class MerchantBrand(Base):
+class MerchantBrandModel(Base):
     __tablename__ = "merchant_brands"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -12,10 +12,10 @@ class MerchantBrand(Base):
     promo_details = Column(JSONB)
 
     # Relationship to multiple restaurant locations
-    locations = relationship("RestaurantLocation", back_populates="brand")
+    locations = relationship("MerchantLocationModel", back_populates="brand")
 
 
-class RestaurantLocation(Base):
+class MerchantLocationModel(Base):
     __tablename__ = "restaurant_locations"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -28,4 +28,4 @@ class RestaurantLocation(Base):
     longitude = Column(Float, nullable=False)
 
     # Relationship back to the brand
-    brand = relationship("MerchantBrand", back_populates="locations")
+    brand = relationship("MerchantBrandModel", back_populates="locations")

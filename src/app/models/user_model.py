@@ -3,7 +3,7 @@ from sqlalchemy.sql import func
 from app.database.connection import Base
 from sqlalchemy.orm import relationship
 
-class User(Base):
+class UserModel(Base):
     __tablename__ = "USER"
 
     user_id = Column(Integer, primary_key=True, index=True)
@@ -12,4 +12,4 @@ class User(Base):
     pin = Column(String(255), nullable=False)
     registration_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    accounts = relationship("Account", back_populates="user")
+    accounts = relationship("AccountModel", back_populates="user")
