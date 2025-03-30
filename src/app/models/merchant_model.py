@@ -16,7 +16,7 @@ class MerchantBrandModel(Base):
 
 
 class MerchantLocationModel(Base):
-    __tablename__ = "restaurant_locations"
+    __tablename__ = "merchant_locations"
 
     id = Column(Integer, primary_key=True, index=True)
     brand_id = Column(Integer, ForeignKey('merchant_brands.id'), nullable=False)

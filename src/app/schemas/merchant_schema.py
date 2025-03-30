@@ -6,7 +6,7 @@ class MerchantBrandCreate(BaseModel):
     description: Optional[str] = None
     promo_details: Optional[dict] = None
 
-class RestaurantLocationCreate(BaseModel):
+class MerchantLocationCreate(BaseModel):
     name: str
     brand_id: int
     address: str
@@ -17,7 +17,7 @@ class BulkCreateRestaurantLocation(BaseModel):
     query: str
     brand_id: int
 
-class RestaurantLocationResponse(BaseModel):
+class MerchantLocationResponse(BaseModel):
     brand_name: str
     brand_description: Optional[str] = None
     brand_promo_details: Optional[dict] = None

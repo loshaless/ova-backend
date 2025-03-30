@@ -14,7 +14,7 @@ class UserRepository:
     def get_all_users_join_accounts(self, skip: int = 0, limit: int = 100):
         return (self.session.query(UserModel)
                 .options(joinedload(UserModel.accounts))
-                .where(UserModel.user_type != "merchant")
+                .where(UserModel.user_type == "personal")
                 .offset(skip).limit(limit).all())
 
     def get_user_by_id_join_accounts(self, user_id: int):

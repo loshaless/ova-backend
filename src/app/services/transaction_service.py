@@ -1,6 +1,4 @@
-from decimal import Decimal
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
 from app.models.transaction_model import TransactionModel
 from app.schemas.transaction_schema import TransferRequest, TransactionCreate
 from app.database.repositories.user_repository import UserRepository

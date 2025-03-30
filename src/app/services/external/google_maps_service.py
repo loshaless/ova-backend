@@ -64,7 +64,7 @@ class GoogleMapsService:
         params = {
             "location": f"{latitude},{longitude}",
             "radius": radius,
-            "key": settings.GOOGLE_MAP_API_KEY,
+            "key": GOOGLE_MAP_API_KEY,
             "keyword": keyword,
             "type": type_name
         }
