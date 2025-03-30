@@ -1,21 +1,16 @@
 from typing import Optional
 from pydantic import BaseModel
 
-class MerchantBrandCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
-    promo_details: Optional[dict] = None
-
 class MerchantLocationCreate(BaseModel):
     name: str
-    brand_id: int
+    user_id: int
     address: str
     latitude: float
     longitude: float
 
 class BulkCreateRestaurantLocation(BaseModel):
     query: str
-    brand_id: int
+    user_id: int
 
 class MerchantLocationResponse(BaseModel):
     brand_name: str

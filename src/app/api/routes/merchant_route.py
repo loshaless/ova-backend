@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from typing import List
 
 from app.core.dependencies import get_google_maps_service
 from app.database.connection import get_db
 from app.database.repositories.merchant_location_repository import MerchantLocationRepository
-from app.database.repositories.merchant_repository import MerchantRepository
+from app.database.repositories.user_repository import UserRepository
 from app.services.external.google_maps_service import GoogleMapsService
 from app.schemas.external.google_map_schema import GoogleMapResponse
-from app.schemas.merchant_schema import MerchantBrandCreate, BulkCreateRestaurantLocation
+from app.schemas.merchant_schema import BulkCreateRestaurantLocation
 from sqlalchemy.orm import Session
 
 from app.services.merhant_service import MerchantService
@@ -21,17 +21,10 @@ def get_merchant_service(
         google_maps_service: GoogleMapsService = Depends(get_google_maps_service)
 ) -> MerchantService:
     return MerchantService(
-        MerchantRepository(db),
+        UserRepository(db),
         MerchantLocationRepository(db),
         google_maps_service
     )
-
-@router.post("/merchant-brands/")
-def create_merchant_brand(
-    merchant_brand: MerchantBrandCreate,
-    merchant_service: MerchantService = Depends(get_merchant_service)
-):
-    return merchant_service.create_merchant_brand(merchant_brand)
 
 @router.post("/restaurant-locations/bulk")
 def create_bulk_merchant_locations(
