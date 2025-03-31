@@ -21,3 +21,7 @@ TTS_LANGUAGE_CODE = os.getenv("TTS_LANGUAGE_CODE", "id-ID")
 TTS_SPEAKING_RATE: float = os.getenv("TTS_SPEAKING_RATE", 1.2)
 TTS_PITCH : float = os.getenv("TTS_PITCH", 3.0)
 TTS_GENDER: str = os.getenv("TTS_GENDER", "FEMALE")
+
+# DIFY Settings
+DIFY_BASE_URL = os.getenv("DIFY_BASE_URL", "")
+DIFY_API_KEY = os.getenv("DIFY_API_KEY", "")
