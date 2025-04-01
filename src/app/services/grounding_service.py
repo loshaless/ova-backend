@@ -18,7 +18,7 @@ class GroundingService:
             raise ValueError("LLM prompt not found for currency_prompt")
 
         generate_content_request = GenerateContentRequest(**vars(llm_prompt))
-        response = self.vertexai_service.generate_content(
+        response = self.vertexai_service.generate_content_stream(
             question,
             generate_content_request
         )

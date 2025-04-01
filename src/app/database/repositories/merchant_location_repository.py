@@ -20,7 +20,7 @@ class MerchantLocationRepository:
                     WITH user_location AS (
                         SELECT ST_Transform(ST_SetSRID(ST_MakePoint(:user_longitude, :user_latitude), 4326), 3857) AS user_point
                     )
-                    SELECT u.full_name
+                    SELECT u.full_name, u.user_id
                     FROM merchant_locations rl
                     JOIN "USER" u ON u.user_id = rl.user_id
                     CROSS JOIN user_location
@@ -28,7 +28,7 @@ class MerchantLocationRepository:
                         ST_Transform(ST_SetSRID(ST_MakePoint(rl.longitude, rl.latitude), 4326), 3857),
                         user_location.user_point
                     ) <= :parameter_distance
-                    GROUP BY u.full_name;
+                    GROUP BY u.full_name, u.user_id;
                                     """)
 
         return self.db.execute(

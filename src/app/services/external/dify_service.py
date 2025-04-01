@@ -1,4 +1,4 @@
-from app.core.config import DIFY_API_KEY, DIFY_BASE_URL
+from app.core.config import DIFY_DATASET_PROMO_API_KEY, DIFY_BASE_URL
 from typing import Optional, List
 import httpx
 
@@ -9,7 +9,7 @@ class DifyService:
     BASE_URL = DIFY_BASE_URL
 
     headers = {
-        "Authorization": f"Bearer {DIFY_API_KEY}",
+        "Authorization": f"Bearer {DIFY_DATASET_PROMO_API_KEY}",
         "Content-Type": "application/json"
     }
 
@@ -49,7 +49,6 @@ class DifyService:
             knowledge_json = response.json()["records"]
             records: List[Record] = []
             for knowledge in knowledge_json:
-                print(knowledge)
                 score = knowledge["score"]
                 segment = knowledge["segment"]
                 content = segment["content"]

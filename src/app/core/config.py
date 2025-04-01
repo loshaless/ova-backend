@@ -24,4 +24,4 @@ TTS_GENDER: str = os.getenv("TTS_GENDER", "FEMALE")
 
 # DIFY Settings
 DIFY_BASE_URL = os.getenv("DIFY_BASE_URL", "")
-DIFY_API_KEY = os.getenv("DIFY_API_KEY", "")
+DIFY_DATASET_PROMO_API_KEY = os.getenv("DIFY_DATASET_PROMO_API_KEY", "")
