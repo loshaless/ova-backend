@@ -4,6 +4,7 @@ from app.database.repositories.merchant_location_repository import MerchantLocat
 from app.database.repositories.user_repository import UserRepository
 from app.models.merchant_model import MerchantLocationModel
 from app.schemas.external.dify_schema import WorkflowRequest
+from app.schemas.external.vertex_ai_schema import GenerateContentRequest
 from app.schemas.merchant_schema import BulkCreateRestaurantLocation, MerchantLocationCreate, MerchantLocationResponse
 from fastapi import HTTPException
 import json
@@ -79,7 +80,7 @@ class MerchantService:
                 }
             )
         )
-        promos = json.loads(workflow["data"]["outputs"]["result"])
+        promos = workflow["data"]["outputs"]["result"]
 
         # GET ALL MERCHANT AROUND USER
         list_of_merchant_in_tuple = self.merchant_location_repository.get_distinct_nearby_merchant_locations_by_lat_long(latitude, longitude, max_distance)
@@ -91,10 +92,21 @@ class MerchantService:
             merchant_name = merchant[0]
             merchant_id = merchant[1]
             for promo in promos:
-                if merchant_name in promo["brand_name"]:
+                print(merchant_name.lower(), promo["metadata"]["doc_metadata"]["brand_name"].lower(), merchant_name.lower() in promo["metadata"]["doc_metadata"]["brand_name"].lower())
+                if merchant_name.lower() in promo["metadata"]["doc_metadata"]["brand_name"].lower():
                     filtered_merchant_id.append(merchant_id)
-                    map_merchant_id_to_promo[merchant_id] = promo
+                    map_merchant_id_to_promo[merchant_id] = {
+                        "content": promo["content"],
+                        "brand_name": merchant_name
+                    }
                     break
+
+        # SUMMARIZE CONTENT USING LLM
+        llm_prompt = self.llm_repository.get_llm_prompt_by_title("summarize_promo")
+        map_id_to_summary = self.vertex_ai_service.generate_content(
+           question=json.dumps(map_merchant_id_to_promo),
+           generate_content_request=GenerateContentRequest(**vars(llm_prompt))
+        )
 
         # GET LAT AND LANG BASE ON MERCHANT USER ID
         list_merchant_detail = self.merchant_location_repository.get_distinct_nearby_merchant_locations_by_lat_long_and_user_id(
@@ -106,7 +118,8 @@ class MerchantService:
         fields = ["brand_name", "user_id", "branch_name", "address", "latitude", "longitude", "distance_meters"]
         for merchant_db in list_merchant_detail:
             merchant_dict = dict(zip(fields, merchant_db))
-            merchant_dict["content"] = map_merchant_id_to_promo[merchant_dict["user_id"]]["content"]
+            user_id = merchant_dict["user_id"]
+            merchant_dict["content"] = map_id_to_summary[user_id]
             result.append(
                 MerchantLocationResponse(
                     brand_name=merchant_dict["brand_name"],
