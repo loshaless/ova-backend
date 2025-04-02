@@ -1,4 +1,6 @@
 from fastapi import HTTPException
+
+from app.database.repositories.category_repository import CategoryRepository
 from app.models.transaction_model import TransactionModel
 from app.schemas.transaction_schema import TransferRequest, TransactionCreate
 from app.database.repositories.user_repository import UserRepository
@@ -6,10 +8,17 @@ from app.database.repositories.account_repository import AccountRepository
 from app.database.repositories.transaction_repository import TransactionRepository
 
 class TransactionService:
-    def __init__(self, account_repository: AccountRepository, transaction_repository: TransactionRepository, user_repository: UserRepository):
+    def __init__(
+        self,
+        account_repository: AccountRepository,
+        transaction_repository: TransactionRepository,
+        user_repository: UserRepository,
+        category_repository: CategoryRepository
+    ):
         self.user_repo = user_repository
         self.account_repo =account_repository
         self.transaction_repo = transaction_repository
+        self.category_repository = category_repository
 
     def transfer_money(self, transfer_request: TransferRequest):
         # Get sender account
@@ -63,8 +72,11 @@ class TransactionService:
     def get_account_transactions(self, account_id: int):
         return self.transaction_repo.get_transactions_by_account(account_id)
 
-    def update_transaction_category(self, transaction_id: int, category_main_id: int, category_sub_id: int):
-        transaction = self.transaction_repo.update_transaction_category(transaction_id, category_main_id, category_sub_id)
+    def update_transaction_category(self, transaction_id: int, category_main: str, category_sub: str):
+        category_main_id = self.category_repository.get_category_by_name(category_main).category_main_id
+        category_sub_id = self.category_repository.get_subcategory_by_name(category_sub).category_sub_id
+
+        transaction = self.transaction_repo.update_transaction_category(transaction_id, +category_main_id, +category_sub_id)
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
         return transaction

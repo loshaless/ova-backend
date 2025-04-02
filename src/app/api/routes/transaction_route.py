@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 from app.database.repositories.account_repository import AccountRepository
+from app.database.repositories.category_repository import CategoryRepository
 from app.database.repositories.transaction_repository import TransactionRepository
 from app.database.repositories.user_repository import UserRepository
 from app.schemas.transaction_schema import TransactionResponse, TransferRequest, CategoryUpdateRequest
@@ -14,7 +15,7 @@ router = APIRouter(
 )
 
 def get_transaction_service(db: Session = Depends(get_db)) -> TransactionService:
-    return TransactionService(AccountRepository(db), TransactionRepository(db), UserRepository(db))
+    return TransactionService(AccountRepository(db), TransactionRepository(db), UserRepository(db), CategoryRepository(db))
 
 @router.post("/transfer", response_model=TransactionResponse)
 def transfer_money(
@@ -36,4 +37,4 @@ def update_transaction_category(
     category_update: CategoryUpdateRequest,
     transaction_service: TransactionService = Depends(get_transaction_service)
 ):
-    return transaction_service.update_transaction_category(transaction_id, category_update.category_main_id, category_update.category_sub_id)
+    return transaction_service.update_transaction_category(transaction_id, category_update.category_main, category_update.category_sub)

@@ -58,5 +58,5 @@ class TransactionResponse(BaseModel):
         from_attributes = True
 
 class CategoryUpdateRequest(BaseModel):
-    category_main_id: int
-    category_sub_id: int
+    category_main: str
+    category_sub: str
