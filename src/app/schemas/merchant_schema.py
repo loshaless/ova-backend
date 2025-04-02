@@ -14,9 +14,9 @@ class BulkCreateRestaurantLocation(BaseModel):
 
 class MerchantLocationResponse(BaseModel):
     brand_name: str
-    brand_description: Optional[str] = None
-    brand_promo_details: Optional[dict] = None
+    branch_name: Optional[str] = None
+    brand_promo_details: str = None
     address: str
     latitude: float
     longitude: float
-    distance: Optional[float] = None  # Distance from search point
+    distance_meters: Optional[float] = None

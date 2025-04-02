@@ -1,11 +1,13 @@
-from app.constants.DifyDatasetID import DatasetID
+
 from app.database.repositories.llm_prompt_repository import LLMPromptRepository
 from app.database.repositories.merchant_location_repository import MerchantLocationRepository
 from app.database.repositories.user_repository import UserRepository
 from app.models.merchant_model import MerchantLocationModel
-from app.schemas.external.vertex_ai_schema import GenerateContentRequest
-from app.schemas.merchant_schema import BulkCreateRestaurantLocation, MerchantLocationCreate
+from app.schemas.external.dify_schema import WorkflowRequest
+from app.schemas.merchant_schema import BulkCreateRestaurantLocation, MerchantLocationCreate, MerchantLocationResponse
 from fastapi import HTTPException
+import json
+from typing import List
 
 from app.services.external.dify_service import DifyService
 from app.services.external.google_maps_service import GoogleMapsService
@@ -62,12 +64,22 @@ class MerchantService:
                 )
             )
 
-    async def get_distinct_nearby_merchant_locations_by_lat_long_with_promo(self, latitude: float, longitude: float, max_distance: float):
+    async def get_distinct_nearby_merchant_locations_by_lat_long_with_promo(
+        self,
+        category:str,
+        latitude: float,
+        longitude: float,
+        max_distance: float
+    ) -> List[MerchantLocationResponse]:
         # GET ALL PROMOS FROM KNOWLEDGE BASE
-        promos = await self.dify_service.retrieve(
-           dataset_id=DatasetID.WEBSITE.value,
-           query="apa saja produk cimb niaga?"
+        workflow = await self.dify_service.execute_workflow(
+            WorkflowRequest(
+                inputs={
+                    "keyword": category,
+                }
+            )
         )
+        promos = json.loads(workflow["data"]["outputs"]["result"])
 
         # GET ALL MERCHANT AROUND USER
         list_of_merchant_in_tuple = self.merchant_location_repository.get_distinct_nearby_merchant_locations_by_lat_long(latitude, longitude, max_distance)
@@ -79,19 +91,32 @@ class MerchantService:
             merchant_name = merchant[0]
             merchant_id = merchant[1]
             for promo in promos:
-                if merchant_name in promo.doc_metadata["brand_name"]:
+                if merchant_name in promo["brand_name"]:
                     filtered_merchant_id.append(merchant_id)
                     map_merchant_id_to_promo[merchant_id] = promo
                     break
 
         # GET LAT AND LANG BASE ON MERCHANT USER ID
-
-        # summarize using LLM
-        llm_prompt = self.llm_repository.get_llm_prompt_by_title("summarize_promo")
-
-        result = self.vertex_ai_service.generate_content(
-           question="hari ini hari apa",
-           generate_content_request=GenerateContentRequest(**vars(llm_prompt))
+        list_merchant_detail = self.merchant_location_repository.get_distinct_nearby_merchant_locations_by_lat_long_and_user_id(
+            latitude, longitude, max_distance, filtered_merchant_id
         )
 
-        return filtered_merchant_id
+        # MAP PROMOS TO THE MERCHANT NEARBY
+        result: List[MerchantLocationResponse] = []
+        fields = ["brand_name", "user_id", "branch_name", "address", "latitude", "longitude", "distance_meters"]
+        for merchant_db in list_merchant_detail:
+            merchant_dict = dict(zip(fields, merchant_db))
+            merchant_dict["content"] = map_merchant_id_to_promo[merchant_dict["user_id"]]["content"]
+            result.append(
+                MerchantLocationResponse(
+                    brand_name=merchant_dict["brand_name"],
+                    branch_name=merchant_dict["branch_name"],
+                    brand_promo_details=merchant_dict["content"],
+                    address=merchant_dict["address"],
+                    latitude=merchant_dict["latitude"],
+                    longitude=merchant_dict["longitude"],
+                    distance_meters=merchant_dict["distance_meters"],
+                )
+            )
+
+        return result

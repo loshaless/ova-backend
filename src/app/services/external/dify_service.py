@@ -1,20 +1,15 @@
-from app.core.config import DIFY_DATASET_PROMO_API_KEY, DIFY_BASE_URL
+from app.core.config import DIFY_DATASET_PROMO_API_KEY, DIFY_BASE_URL, DIFT_WORKFLOW_API_KEY
 from typing import Optional, List
 import httpx
 
-from app.schemas.external.dify_schema import RetrievalModel, RetrievalRequest, Record
+from app.schemas.external.dify_schema import RetrievalModel, RetrievalRequest, Record, WorkflowRequest
 
 
 class DifyService:
     BASE_URL = DIFY_BASE_URL
 
-    headers = {
-        "Authorization": f"Bearer {DIFY_DATASET_PROMO_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
     @classmethod
-    async def retrieve(
+    async def retrieve_from_knowledge(
         cls,
         dataset_id: str,
         query: str,
@@ -26,6 +21,10 @@ class DifyService:
     )-> List[Record]:
         url = f"{cls.BASE_URL}/v1/datasets/{dataset_id}/retrieve"
 
+        headers = {
+            "Authorization": f"Bearer {DIFY_DATASET_PROMO_API_KEY}",
+            "Content-Type": "application/json"
+        }
         retrieval_model = RetrievalModel(
             search_method=search_method,
             reranking_enable=reranking_enable,
@@ -43,9 +42,10 @@ class DifyService:
             response = await client.post(
                 url,
                 json=payload.dict(),
-                headers=cls.headers,
+                headers=headers,
                 timeout=30.0
             )
+            response.raise_for_status()
             knowledge_json = response.json()["records"]
             records: List[Record] = []
             for knowledge in knowledge_json:
@@ -61,3 +61,22 @@ class DifyService:
                 records.append(record)
 
             return records
+
+    @classmethod
+    async def execute_workflow(cls, workflow_request: WorkflowRequest):
+        url = f"{cls.BASE_URL}/v1/workflows/run"
+
+        headers = {
+            "Authorization": f"Bearer {DIFT_WORKFLOW_API_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                url,
+                json=workflow_request.model_dump(),
+                headers=headers,
+                timeout=30.0
+            )
+            response.raise_for_status()
+            return response.json()

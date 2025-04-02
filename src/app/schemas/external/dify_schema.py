@@ -1,5 +1,9 @@
+from random import Random
 from typing import Any, Dict, Optional, List
 from pydantic import BaseModel, Field
+
+from app.helper.string_helper import generate_random_string
+
 
 class RetrievalModel(BaseModel):
     search_method: str = "semantic_search"
@@ -15,6 +19,10 @@ class RetrievalRequest(BaseModel):
     query: str
     retrieval_model: RetrievalModel = Field(default_factory=RetrievalModel)
 
+class WorkflowRequest(BaseModel):
+    inputs: Optional[dict[str, Any]]
+    response_mode: str = "blocking"
+    user: str = generate_random_string(10)
 
 # RESPONSE
 class Record(BaseModel):
