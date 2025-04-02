@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 class MerchantLocationCreate(BaseModel):
@@ -12,7 +12,7 @@ class BulkCreateRestaurantLocation(BaseModel):
     query: str
     user_id: int
 
-class MerchantLocationResponse(BaseModel):
+class MerchantLocationDetail(BaseModel):
     brand_name: str
     branch_name: Optional[str] = None
     brand_promo_details: str = None
@@ -20,3 +20,8 @@ class MerchantLocationResponse(BaseModel):
     latitude: float
     longitude: float
     distance_meters: Optional[float] = None
+    link: str
+
+class MerchantLocationDetailResponse(BaseModel):
+    intent: str = "Show Merchant Location By Promo"
+    entities: List[MerchantLocationDetail]
