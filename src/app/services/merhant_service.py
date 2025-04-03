@@ -4,15 +4,21 @@ from app.database.repositories.merchant_location_repository import MerchantLocat
 from app.database.repositories.user_repository import UserRepository
 from app.models.merchant_model import MerchantLocationModel
 from app.schemas.external.dify_schema import WorkflowRequest
-from app.schemas.external.vertex_ai_schema import GenerateContentRequest
+from google.genai import types
 from app.schemas.merchant_schema import BulkCreateRestaurantLocation, MerchantLocationCreate, MerchantLocationDetail
 from fastapi import HTTPException
-import json
 from typing import List
+import json
 
 from app.services.external.dify_service import DifyService
 from app.services.external.google_maps_service import GoogleMapsService
 from app.services.external.vertex_ai_service import VertexAIService
+
+from pydantic import BaseModel, Field
+
+class BrandContentMap(BaseModel):
+    brand_id: List[int]
+    contents: List[str]
 
 class MerchantService:
     def __init__(
@@ -103,12 +109,32 @@ class MerchantService:
 
         # SUMMARIZE CONTENT USING LLM
         llm_prompt = self.llm_repository.get_llm_prompt_by_title("summarize_promo")
-        map_id_to_promos = self.vertex_ai_service.generate_content(
-           question=json.dumps(map_merchant_id_to_promo),
-           generate_content_request=GenerateContentRequest(**vars(llm_prompt))
+        response = self.vertex_ai_service.get_client().models.generate_content(
+            model=llm_prompt.model_name,
+            contents=[
+                types.Content(
+                    role="user",
+                    parts=[
+                        types.Part.from_text(text=json.dumps(map_merchant_id_to_promo))
+                    ]
+                )
+            ],
+            config={
+                'system_instruction': [types.Part.from_text(text=llm_prompt.prompt_text)],
+                'response_mime_type': 'application/json',
+                'response_schema': BrandContentMap,
+                'temperature': llm_prompt.temperature,
+                'top_p': llm_prompt.top_p,
+                'max_output_tokens': llm_prompt.max_tokens
+            },
         )
+        if response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
+            response = response.candidates[0].content.parts[0].text
 
-        map_id_to_promos = json.loads(map_id_to_promos.strip().strip("```json").strip().strip("```").strip())
+        response = json.loads(response)
+        map_id_to_promos = {}
+        for i, v in enumerate(response["brand_id"]):
+            map_id_to_promos[str(v)] = response["contents"][i]
 
         # GET LAT AND LANG BASE ON MERCHANT USER ID
         list_merchant_detail = self.merchant_location_repository.get_distinct_nearby_merchant_locations_by_lat_long_and_user_id(

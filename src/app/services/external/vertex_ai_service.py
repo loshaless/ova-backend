@@ -29,6 +29,9 @@ class VertexAIService:
             credentials=creds
         )
 
+    def get_client(self):
+        return self.client
+
     def generate_content_stream(
         self,
         question: str,
