@@ -51,6 +51,13 @@ def get_user_preferences(
 ):
     return user_preference_service.get_user_preference_by_user_id(user_id)
 
+@router.get("/{full_name}/preferences/full-name", response_model=UserPreferenceResponse)
+def get_user_preferences(
+    full_name: str,
+    user_preference_service: UserPreferenceService = Depends(get_user_preference_service)
+):
+    return user_preference_service.get_user_preference_by_full_name(full_name)
+
 @router.put("/{user_id}/preferences", response_model=UserPreferenceResponse)
 def update_user_preferences(
     user_id: int,

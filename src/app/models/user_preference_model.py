@@ -11,3 +11,7 @@ class UserPreferenceModel(Base):
     last_updated = Column(DateTime(timezone=True), server_default=func.timezone('Asia/Jakarta', func.now()),
                           nullable=False)
     persona = Column(JSON)
+    pekerjaan = Column(String)
+    usia = Column(Integer)
+    marital_status = Column(String)
+    penghasilan_perbulan = Column(Integer)
