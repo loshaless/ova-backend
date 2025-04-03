@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import transaction_route, merchant_route
+from app.api.routes import transaction_route, merchant_route, virtual_transaction_route
 from app.api.routes import user_route, account_route, test_route, category_route
 from app.api.routes.external import grounding_route, transcription_route
 from google.cloud import aiplatform
@@ -43,3 +43,4 @@ app.include_router(transaction_route.router, tags=["transaction"])
 app.include_router(category_route.router, tags=["category"])
 app.include_router(grounding_route.router, tags=["external"])
 app.include_router(merchant_route.router, tags=["merchant"])
+app.include_router(virtual_transaction_route.router, tags=["virtual_transaction"])
