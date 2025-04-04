@@ -1,9 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import List
 
-from markdown_it.common.entities import entities
-
-from app.core.dependencies import get_google_maps_service, get_dify_service, get_vertex_ai_service
+from app.core.dependencies import get_google_maps_service, get_dify_service, get_vertex_ai_service, get_tts_service
 from app.database.connection import get_db
 from app.database.repositories.llm_prompt_repository import LLMPromptRepository
 from app.database.repositories.merchant_location_repository import MerchantLocationRepository
@@ -15,6 +13,7 @@ from app.schemas.merchant_schema import BulkCreateRestaurantLocation, MerchantLo
     MerchantLocationDetailResponse
 from sqlalchemy.orm import Session
 
+from app.services.external.google_tts import TTSService
 from app.services.external.vertex_ai_service import VertexAIService
 from app.services.merhant_service import MerchantService
 
@@ -64,7 +63,8 @@ async def find_nearby_restaurants_user(
         latitude: float = -6.2731663,
         longitude: float = 106.7243052,
         max_distance: float = 5000,
-        merchant_service: MerchantService = Depends(get_merchant_service)
+        merchant_service: MerchantService = Depends(get_merchant_service),
+        tts_service: TTSService = Depends(get_tts_service)
 ):
     list_of_merchant: List[MerchantLocationDetail] = await merchant_service.get_distinct_nearby_merchant_locations_by_lat_long_with_promo(
         category,
@@ -72,4 +72,5 @@ async def find_nearby_restaurants_user(
         longitude,
         max_distance
     )
-    return MerchantLocationDetailResponse(entities = list_of_merchant)
+    base64=tts_service.synthesize_speech(f"Berikut adalah promo {category} sekitar anda")
+    return MerchantLocationDetailResponse(entities = list_of_merchant, base64=base64)

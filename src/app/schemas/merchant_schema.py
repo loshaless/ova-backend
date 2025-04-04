@@ -25,3 +25,4 @@ class MerchantLocationDetail(BaseModel):
 class MerchantLocationDetailResponse(BaseModel):
     intent: str = "Show Merchant Location By Promo"
     entities: List[MerchantLocationDetail]
+    base64: str
