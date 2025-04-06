@@ -48,6 +48,7 @@ class VirtualTransactionService:
 
             location = random.choice(request.location) if request.location else "Jakarta"
             message = random.choice(request.dummy_messages) if request.dummy_messages else "Dummy Transaction"
+            category_main_id = request.category_main_id
 
             transaction = TransactionModel(
                 reference_number=reference_number,
@@ -60,7 +61,8 @@ class VirtualTransactionService:
                 transaction_type="VIRTUAL_TRANSFER",
                 sender_name=sender_user.full_name,
                 receiver_name=receiver_user.full_name,
-                receiver_location=location
+                receiver_location=location,
+                category_main_id=category_main_id
             )
 
             self.transaction_repo.save_transaction(transaction)

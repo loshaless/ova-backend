@@ -16,6 +16,7 @@ class VirtualTransactionBase(BaseModel):
     dummy_messages: List[str] = []
     location: List[str] = []
     currency: str = "IDR"
+    category_main_id: int
 
     @classmethod
     def generate_reference_number(cls):
@@ -43,6 +44,7 @@ class VirtualTransactionResponse(BaseModel):
     sender_name: str
     receiver_name: str
     receiver_location: Optional[str]
+    category_main_id: int
 
     class Config:
         from_attributes = True
