@@ -10,6 +10,7 @@ class TransactionLimitation(BaseModel):
     start_date: date
     end_date: date
 
+
     model_config = {
         "json_encoders": {
             date: lambda v: v.isoformat()
@@ -64,6 +65,13 @@ class UserPersonaProfile(BaseModel):
             ]
         }
     }
+class PersonaModel(BaseModel):
+    financial_goals: list[str]
+    lifestyle: List[str]
+    transaction_limitation: TransactionLimitation
+    financial_behaviour: str
+    preferred_categories: List[str]
+    saving_habit: str
 
 class UserPreferenceUpdate(BaseModel):
     full_name: str
