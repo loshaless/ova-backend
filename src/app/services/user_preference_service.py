@@ -1,6 +1,7 @@
 from app.database.repositories.user_preference_repository import UserPreferenceRepository
 from app.database.repositories.user_repository import UserRepository
 from app.schemas.user_preference_schema import UserPreferenceUpdate
+from app.helper.date_serialize_helper import serialize_dates
 from fastapi import HTTPException
 
 class UserPreferenceService:
@@ -27,7 +28,6 @@ class UserPreferenceService:
         return user_preference
 
     def update_user_preference(self, user_id: int, preference_update: UserPreferenceUpdate):
-        # Check if user exists
         user = self.user_repository.get_user_by_id(user_id)
 
         if not user:
@@ -38,14 +38,7 @@ class UserPreferenceService:
         if user_preference:
             self.user_preference_repository.update_user_preference(user_preference, preference_update)
         else:
-            # Validate at least one field is provided
-            if preference_update.preferences is None and (
-                    preference_update.persona is None or preference_update.persona == ""):
-                raise HTTPException(status_code=400, detail="Either preferences or persona must be provided")
-
-            preferences = preference_update.preferences or {}
-            user_preference = self.user_preference_repository.create_user_preference(user_id, preferences,
-                                                                          preference_update.persona)
+            self.user_preference_repository.create_user_preference(user_id, preference_update)
 
         self.user_preference_repository.commit()
         self.user_preference_repository.refresh(user_preference)
@@ -65,14 +58,7 @@ class UserPreferenceService:
         if user_preference:
             self.user_preference_repository.update_user_preference(user_preference, preference_update)
         else:
-            # Validate at least one field is provided
-            if preference_update.preferences is None and (
-                    preference_update.persona is None or preference_update.persona == ""):
-                raise HTTPException(status_code=400, detail="Either preferences or persona must be provided")
-
-            preferences = preference_update.preferences or {}
-            user_preference = self.user_preference_repository.create_user_preference(user_id, preferences,
-                                                                          preference_update.persona)
+            self.user_preference_repository.update_user_preference(user_preference, preference_update)
 
         self.user_preference_repository.commit()
         self.user_preference_repository.refresh(user_preference)

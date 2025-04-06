@@ -46,18 +46,34 @@ class UserPreferenceRepository:
             "average_spending": average_spending_dict
         }
 
-    def create_user_preference(self, user_id: int, preferences: dict, persona: dict, pekerjaan: str, usia: int, marital_status: str, penghasilan_perbulan: int):
+    def create_user_preference(
+        self,
+        user_id: int,
+        preference_update: UserPreferenceUpdate,
+    ):
+        persona = (
+            preference_update.persona.model_dump(mode="json")
+            if preference_update.persona
+            else {}
+        )
+
+        preferences = self.get_user_preferences(full_name=preference_update.full_name)
+
         user_preference = UserPreferenceModel(
             user_id=user_id,
-            preferences=json.loads(preferences),
+            preferences=preferences,
             persona=persona,
-            pekerjaan=pekerjaan,
-            usia=usia,
-            marital_status=marital_status,
-            penghasilan_perbulan=penghasilan_perbulan
+            pekerjaan=preference_update.pekerjaan,
+            usia=preference_update.usia,
+            marital_status=preference_update.marital_status,
+            penghasilan_perbulan=preference_update.penghasilan_perbulan,
+            last_updated=func.timezone("Asia/Jakarta", func.now()),
         )
+
         self.session.add(user_preference)
+        self.session.commit() 
         return user_preference
+
     
     def get_user_preferences(self, full_name: str):
                 # Average Core Spending 
