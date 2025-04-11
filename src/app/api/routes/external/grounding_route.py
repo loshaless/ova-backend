@@ -12,10 +12,18 @@ router = APIRouter(prefix="/google/grounding")
 def get_grounding_service(db: Session = Depends(get_db)) -> GroundingService:
     return GroundingService(LLMPromptRepository(db), get_vertex_ai_service())
 
-@router.post("/", response_model=GroundingResponse)
+@router.post("/currency", response_model=GroundingResponse)
 def grounding(
     request: GroundingRequest,
     grounding_service: GroundingService = Depends(get_grounding_service)
 ):
     result = grounding_service.grounding_currency(request.question)
+    return {"response": result}
+
+@router.post("/market_update", response_model=GroundingResponse)
+def grounding(
+    request: GroundingRequest,
+    grounding_service: GroundingService = Depends(get_grounding_service)
+):
+    result = grounding_service.grounding_market_update(request.question)
     return {"response": result}

@@ -41,6 +41,10 @@ class VertexAIService:
             types.Content(role="user", parts=[types.Part.from_text(text=question)])
         ]
 
+        tools = [
+            types.Tool(google_search=types.GoogleSearch()),
+        ]
+
         generate_content_config = types.GenerateContentConfig(
             temperature=generate_content_request.temperature,
             top_p=generate_content_request.top_p,
@@ -53,6 +57,7 @@ class VertexAIService:
                 types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="OFF"),
             ],
             system_instruction=[types.Part.from_text(text=generate_content_request.prompt_text)],
+            tools=tools,
         )
 
         response_text = ""
