@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 COPY ./src /code
 
 # Command to run the FastAPI application using Uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "5"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "8"]
