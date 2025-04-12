@@ -59,7 +59,7 @@ def find_nearby_restaurants(
 
 @router.get("/nearby-location/user", response_model=MerchantLocationDetailResponse)
 async def find_nearby_restaurants_user(
-        category: str = "Food & Beverage",
+        category: str = "Food & Beverages",
         latitude: float = -6.2731663,
         longitude: float = 106.7243052,
         max_distance: float = 5000,

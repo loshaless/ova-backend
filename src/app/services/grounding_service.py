@@ -11,28 +11,28 @@ class GroundingService:
         self.llm_repository = llm_repository
         self.vertexai_service = vertexai_service
 
-    def grounding_currency(self, question: str):
+    async def grounding_currency(self, question: str):
         llm_prompt = self.llm_repository.get_llm_prompt_by_title("currency_prompt")
 
         if not llm_prompt:
             raise ValueError("LLM prompt not found for currency_prompt")
 
         generate_content_request = GenerateContentRequest(**vars(llm_prompt))
-        response = self.vertexai_service.generate_content_stream(
+        response = await self.vertexai_service.generate_content_stream(
             question,
             generate_content_request
         )
 
         return response
     
-    def grounding_market_update(self, question: str):
+    async def grounding_market_update(self, question: str):
         llm_prompt = self.llm_repository.get_llm_prompt_by_title("market_update")
 
         if not llm_prompt:
             raise ValueError("LLM prompt not found for currency_prompt")
 
         generate_content_request = GenerateContentRequest(**vars(llm_prompt))
-        response = self.vertexai_service.generate_content_stream(
+        response = await self.vertexai_service.generate_content_stream(
             question,
             generate_content_request
         )

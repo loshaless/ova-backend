@@ -9,6 +9,7 @@ from app.schemas.merchant_schema import BulkCreateRestaurantLocation, MerchantLo
 from fastapi import HTTPException
 from typing import List
 import json
+import asyncio
 
 from app.services.external.dify_service import DifyService
 from app.services.external.google_maps_service import GoogleMapsService
@@ -109,24 +110,26 @@ class MerchantService:
 
         # SUMMARIZE CONTENT USING LLM
         llm_prompt = self.llm_repository.get_llm_prompt_by_title("summarize_promo")
-        response = self.vertex_ai_service.get_client().models.generate_content(
-            model=llm_prompt.model_name,
-            contents=[
-                types.Content(
-                    role="user",
-                    parts=[
-                        types.Part.from_text(text=json.dumps(map_merchant_id_to_promo))
-                    ]
-                )
-            ],
-            config={
-                'system_instruction': [types.Part.from_text(text=llm_prompt.prompt_text)],
-                'response_mime_type': 'application/json',
-                'response_schema': BrandContentMap,
-                'temperature': llm_prompt.temperature,
-                'top_p': llm_prompt.top_p,
-                'max_output_tokens': llm_prompt.max_tokens
-            },
+        response = await asyncio.to_thread(
+            lambda: self.vertex_ai_service.get_client().models.generate_content(
+                model=llm_prompt.model_name,
+                contents=[
+                    types.Content(
+                        role="user",
+                        parts=[
+                            types.Part.from_text(text=json.dumps(map_merchant_id_to_promo))
+                        ]
+                    )
+                ],
+                config={
+                    'system_instruction': [types.Part.from_text(text=llm_prompt.prompt_text)],
+                    'response_mime_type': 'application/json',
+                    'response_schema': BrandContentMap,
+                    'temperature': llm_prompt.temperature,
+                    'top_p': llm_prompt.top_p,
+                    'max_output_tokens': llm_prompt.max_tokens
+                },
+            )
         )
         if response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
             response = response.candidates[0].content.parts[0].text

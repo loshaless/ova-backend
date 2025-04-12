@@ -1,3 +1,4 @@
+import asyncio
 from google import genai
 from google.genai import types
 from google.oauth2 import service_account
@@ -32,7 +33,14 @@ class VertexAIService:
     def get_client(self):
         return self.client
 
-    def generate_content_stream(
+    async def generate_content_stream(
+        self,
+        question: str,
+        generate_content_request: GenerateContentRequest
+    ) -> str:
+        return await asyncio.to_thread(self._generate_content_stream_blocking, question, generate_content_request)
+
+    def _generate_content_stream_blocking(
         self,
         question: str,
         generate_content_request: GenerateContentRequest
@@ -71,14 +79,18 @@ class VertexAIService:
 
         return response_text
 
-    def generate_content(
+    async def generate_content(
             self,
             question: str,
             generate_content_request: GenerateContentRequest
     ) -> str:
-        """
-        Generate content without streaming
-        """
+        return await asyncio.to_thread(self._generate_content_blocking, question, generate_content_request)
+
+    def _generate_content_blocking(
+        self,
+        question: str,
+        generate_content_request: GenerateContentRequest
+    ) -> str:
         contents = [
             types.Content(role="user", parts=[types.Part.from_text(text=question)])
         ]
