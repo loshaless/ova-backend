@@ -62,7 +62,7 @@ class MerchantLocationRepository:
             JOIN "USER" u ON u.user_id = rl.user_id
             CROSS JOIN user_point up
             WHERE
-                rl.user_id IN (:user_id_list)
+                rl.user_id IN :user_id_list
                 AND ST_Distance(
                     ST_Transform(ST_SetSRID(ST_MakePoint(rl.longitude, rl.latitude), 4326), 3857),
                     up.geom
