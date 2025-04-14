@@ -40,39 +40,35 @@ class MerchantLocationRepository:
             }
         )
 
-    def get_distinct_nearby_merchant_locations_by_lat_long_and_user_id(self, latitude: float, longitude: float,
-                                                                       max_distance: float, user_id_list: List[int]):
+    def get_nearby_merchant_locations_by_lat_long_and_user_id(self, latitude: float, longitude: float,
+                                                              max_distance: float, user_id_list: List[int]):
         query = text("""
-            WITH user_location AS (
-                SELECT
-                    ST_Transform(ST_SetSRID(ST_MakePoint(:user_longitude, :user_latitude), 4326), 3857) AS user_point
-            ),
-            distance_data AS (
-                SELECT
-                    u.full_name,
-                    rl.user_id,
-                    rl.name,
-                    rl.address,
-                    rl.latitude,
-                    rl.longitude,
-                    ST_Distance(
-                        ST_Transform(ST_SetSRID(ST_MakePoint(rl.longitude, rl.latitude), 4326), 3857),
-                        (SELECT user_point FROM user_location)
-                    ) AS distance_meters
-                FROM
-                    merchant_locations rl
-                JOIN "USER" u ON u.user_id = rl.user_id
-                CROSS JOIN user_location
-                WHERE
-                    rl.user_id IN :user_id_list  -- Note: no parentheses around the parameter
-                    AND ST_Distance(
-                        ST_Transform(ST_SetSRID(ST_MakePoint(rl.longitude, rl.latitude), 4326), 3857),
-                        (SELECT user_point FROM user_location)
-                    ) <= :parameter_distance
+            WITH user_point AS (
+                SELECT ST_Transform(ST_SetSRID(ST_MakePoint(:user_longitude, :user_latitude), 4326), 3857) AS geom
             )
-            SELECT DISTINCT ON (user_id) *
-            FROM distance_data
-            ORDER BY user_id, distance_meters;
+            SELECT
+                u.full_name,
+                rl.user_id,
+                rl.name,
+                rl.address,
+                rl.latitude,
+                rl.longitude,
+                ST_Distance(
+                    ST_Transform(ST_SetSRID(ST_MakePoint(rl.longitude, rl.latitude), 4326), 3857),
+                    up.geom
+                ) AS distance_meters
+            FROM
+                merchant_locations rl
+            JOIN "USER" u ON u.user_id = rl.user_id
+            CROSS JOIN user_point up
+            WHERE
+                rl.user_id IN (:user_id_list)
+                AND ST_Distance(
+                    ST_Transform(ST_SetSRID(ST_MakePoint(rl.longitude, rl.latitude), 4326), 3857),
+                    up.geom
+                ) <= :parameter_distance
+            ORDER BY
+                user_id, distance_meters;
         """).bindparams(bindparam('user_id_list', expanding=True))
 
         return self.db.execute(

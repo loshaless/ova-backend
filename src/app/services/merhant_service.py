@@ -140,7 +140,7 @@ class MerchantService:
             map_id_to_promos[str(v)] = response["contents"][i]
 
         # GET LAT AND LANG BASE ON MERCHANT USER ID
-        list_merchant_detail = self.merchant_location_repository.get_distinct_nearby_merchant_locations_by_lat_long_and_user_id(
+        list_merchant_detail = self.merchant_location_repository.get_nearby_merchant_locations_by_lat_long_and_user_id(
             latitude, longitude, max_distance, filtered_merchant_id
         )
 
