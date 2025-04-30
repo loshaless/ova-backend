@@ -30,7 +30,7 @@ def protected_route():
 
 @router.get("/test-llm")
 async def llm():
-    model = GenerativeModel("gemini-2.0-flash-001")
+    model = GenerativeModel("gemini-1.5-flash-002")
     response = await model.generate_content_async(
         """
         You are OVA, the official virtual banking assistant for CIMB Niaga. Your purpose is to provide seamless banking assistance to CIMB Niaga customers in Bahasa Indonesia.
@@ -67,7 +67,13 @@ async def llm():
         For all valid banking inquiries, provide clear, accurate, and helpful responses while maintaining a warm, helpful tone that reflects CIMB Niaga's customer-centric approach.
         """
     )
-    return {"message": response.text}
+    result = {
+        "process_id": os.getpid(),
+        "thread_id": threading.get_ident()
+    }
+    _LOGGER.info(result)
+    return JSONResponse(status_code=200, content=result)
+
 
 @router.get("/transcribe-mp3-example")
 async def vertex_ai():
