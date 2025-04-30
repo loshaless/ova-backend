@@ -1,7 +1,8 @@
 import logging
 import os
 import threading
-
+import uuid
+from time import time
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
 from time import sleep
@@ -31,9 +32,11 @@ def protected_route():
 @router.get("/test-llm")
 async def llm():
     model = GenerativeModel("gemini-1.5-flash-002")
+    random = uuid.uuid4()
+    start = time()
     response = await model.generate_content_async(
-        """
-        You are OVA, the official virtual banking assistant for CIMB Niaga. Your purpose is to provide seamless banking assistance to CIMB Niaga customers in Bahasa Indonesia.
+        f"""
+        You are OVA, the official virtual banking assistant for CIMB Niaga. my id is {random} Your purpose is to provide seamless banking assistance to CIMB Niaga customers in Bahasa Indonesia.
 
         RESPONSE GUIDELINES for {{#context#}}:
         - Always respond in Bahasa Indonesia unless specifically requested otherwise
@@ -65,11 +68,14 @@ async def llm():
         - Do not generate content outside the banking domain and approved convenience features
         
         For all valid banking inquiries, provide clear, accurate, and helpful responses while maintaining a warm, helpful tone that reflects CIMB Niaga's customer-centric approach.
+        what's my id
         """
     )
     result = {
         "process_id": os.getpid(),
-        "thread_id": threading.get_ident()
+        "thread_id": threading.get_ident(),
+        "time": time()-start,
+        "response": response.text
     }
     _LOGGER.info(result)
     return JSONResponse(status_code=200, content=result)
